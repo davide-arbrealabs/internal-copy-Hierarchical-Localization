@@ -14,6 +14,8 @@ from . import logger, matchers
 from .utils.base_model import dynamic_load
 from .utils.parsers import names_to_pair, names_to_pair_old, parse_retrieval
 
+NUM_LOADERS = 1
+
 """
 A set of standard configurations that can be directly selected from the command
 line using their name. Each is a dictionary with the following entries:
@@ -232,9 +234,9 @@ def match_from_paths(
 
     dataset = FeaturePairsDataset(pairs, feature_path_q, feature_path_ref)
     loader = torch.utils.data.DataLoader(
-        dataset, num_workers=5, batch_size=1, shuffle=False, pin_memory=True
+        dataset, num_workers=NUM_LOADERS, batch_size=1, shuffle=False, pin_memory=True
     )
-    writer_queue = WorkQueue(partial(writer_fn, match_path=match_path), 5)
+    writer_queue = WorkQueue(partial(writer_fn, match_path=match_path), NUM_LOADERS)
 
     for idx, data in enumerate(tqdm(loader, smoothing=0.1)):
         data = {
